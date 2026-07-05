@@ -103,7 +103,7 @@ jobs:
         run: |
           for lib in artifacts/bin/*/libnode.so; do
             echo "Checking $lib"
-            alignments=$(readelf -l "$lib" | awk '/LOAD/ {print $NF}' | sort -u)
+            alignments=$(readelf -lW "$lib" | awk '$1 == "LOAD" {print $NF}' | sort -u)
             echo "LOAD alignments: $alignments"
             for alignment in $alignments; do
               if [ $((alignment)) -lt 16384 ]; then
