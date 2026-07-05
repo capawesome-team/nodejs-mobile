@@ -1,0 +1,152 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  SCCACHE_GHA_ENABLED: 'true'
+  ANDROID_NDK_VERSION: r24
+  ANDROID_TARGET_SDK_VERSION: 24
+  IOS_MIRROR_URL: https://github.com/nodejs-mobile/nodejs-mobile/releases/download/v18.20.4/nodejs-mobile-v18.20.4-ios.zip
+  IOS_MIRROR_SHA256: 8c5ca3a0d1e38de7f182a5642593e82593b820efd375a14b3ecafc4bcfee620e
+
+permissions:
+  contents: write
+
+jobs:
+  build-android:
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - { os: ubuntu-22.04, target_arch: arm }
+          - { os: ubuntu-22.04, target_arch: arm64 }
+          - { os: ubuntu-22.04, target_arch: x86_64 }
+
+    runs-on: ${{ matrix.config.os }}
+    env:
+      TARGET_ARCH: ${{ matrix.config.target_arch }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: '0'
+
+      - name: Run sccache-cache
+        uses: mozilla-actions/sccache-action@v0.0.6
+
+      - name: Install build utils
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-multilib g++-multilib
+
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v1
+        id: setup-ndk
+        with:
+          ndk-version: ${{ env.ANDROID_NDK_VERSION }}
+          add-to-path: false
+
+      - name: Build
+        env:
+          MY_ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+          LDFLAGS: '-Wl,-z,max-page-size=16384'
+        run: |
+          ./tools/android_build.sh $MY_ANDROID_NDK_HOME $ANDROID_TARGET_SDK_VERSION $TARGET_ARCH
+          rm -rf ./out_android/libnode
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: node-android-${{ env.TARGET_ARCH }}
+          path: out_android
+
+  combine-android:
+    runs-on: ubuntu-22.04
+    needs: build-android
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: '0'
+
+      - name: Install build utils
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-multilib g++-multilib
+
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: ${{ env.ANDROID_NDK_VERSION }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: node-android-*
+          merge-multiple: true
+          path: out_android
+
+      - run: rm -rf out_android/libnode
+
+      - name: Generate config.gypi
+        run: ./configure
+
+      - name: Combine
+        run: |
+          mkdir -p artifacts/bin
+          mkdir -p artifacts/include
+          cp -R out_android/* artifacts/bin
+          ./tools/copy_libnode_headers.sh android
+          cp -R out_android/libnode/include/* artifacts/include
+
+      - name: Verify 16 KB page alignment
+        run: |
+          for lib in artifacts/bin/*/libnode.so; do
+            echo "Checking $lib"
+            alignments=$(readelf -l "$lib" | awk '/LOAD/ {print $NF}' | sort -u)
+            echo "LOAD alignments: $alignments"
+            for alignment in $alignments; do
+              if [ $((alignment)) -lt 16384 ]; then
+                echo "ERROR: $lib has a LOAD segment with alignment $alignment (< 16384)."
+                exit 1
+              fi
+            done
+          done
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nodejs-mobile-android
+          path: artifacts
+
+  release:
+    runs-on: ubuntu-22.04
+    needs: combine-android
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: nodejs-mobile-android
+          path: nodejs-mobile-android
+
+      - name: Package Android artifacts
+        run: |
+          cd nodejs-mobile-android
+          zip -qr "../nodejs-mobile-${{ github.ref_name }}-android.zip" bin include
+          cd ..
+
+      - name: Mirror iOS artifacts
+        run: |
+          curl -sL "$IOS_MIRROR_URL" -o "nodejs-mobile-${{ github.ref_name }}-ios.zip"
+          echo "$IOS_MIRROR_SHA256  nodejs-mobile-${{ github.ref_name }}-ios.zip" | sha256sum -c -
+
+      - name: Generate checksums
+        run: sha256sum nodejs-mobile-*.zip > SHA256SUMS.txt
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            --repo "${{ github.repository }}" \
+            --title "Node.js for Mobile Apps ${{ github.ref_name }}" \
+            --notes "Node.js for Mobile Apps core library based on the upstream \`release18-20-4+16kb-fix\` branch (Node.js 18.20.4 with 16 KB page alignment for Android). The iOS artifacts are an unmodified mirror of the official v18.20.4 release." \
+            nodejs-mobile-*.zip SHA256SUMS.txt
