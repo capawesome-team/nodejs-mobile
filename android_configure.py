@@ -66,8 +66,11 @@ os.environ['PATH'] += os.pathsep + toolchain_path + "/bin"
 os.environ['CC'] = toolchain_path + "/bin/" + TOOLCHAIN_PREFIX + android_sdk_version + "-" +  "clang"
 os.environ['CXX'] = toolchain_path + "/bin/" + TOOLCHAIN_PREFIX + android_sdk_version + "-" + "clang++"
 # nodejs-mobile patch: add host CC and CXX
-os.environ['CC_host'] = os.popen('command -v gcc').read().strip()
-os.environ['CXX_host'] = os.popen('command -v g++').read().strip()
+# 32-bit targets need 32-bit host tools, so configure detects host_arch=ia32
+# and builds every host target (including the ICU tools) with -m32.
+host_cc_flags = " -m32" if DEST_CPU in ("arm", "ia32") else ""
+os.environ['CC_host'] = os.popen('command -v gcc').read().strip() + host_cc_flags
+os.environ['CXX_host'] = os.popen('command -v g++').read().strip() + host_cc_flags
 
 GYP_DEFINES = "target_arch=" + arch
 GYP_DEFINES += " v8_target_arch=" + arch
