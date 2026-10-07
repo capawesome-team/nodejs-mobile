@@ -152,6 +152,7 @@ jobs:
           cp -R out_android/* artifacts/bin
           ./tools/copy_libnode_headers.sh android
           cp -R out_android/libnode/include/* artifacts/include
+          cp LICENSE artifacts/
 
       - uses: actions/upload-artifact@v4
         with:
@@ -204,6 +205,7 @@ jobs:
           cp -R out_ios/NodeMobile.xcframework artifacts/
           ./tools/copy_libnode_headers.sh ios
           cp -R out_ios/libnode/include/* artifacts/include
+          cp LICENSE artifacts/
 
       - uses: actions/upload-artifact@v4
         with:
