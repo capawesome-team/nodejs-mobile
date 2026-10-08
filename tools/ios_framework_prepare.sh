@@ -26,6 +26,7 @@ declare -a outputs_common=(
     "libhistogram.a"
     "libicudata.a"
     "libicui18n.a"
+    "libicustubdata.a"
     "libicuucx.a"
     "libllhttp.a"
     "libnghttp2.a"
