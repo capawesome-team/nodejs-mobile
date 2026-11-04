@@ -17,6 +17,9 @@
 		A36728EC2E53580A004DF2FB /* libgtest_main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A36728C42E530EF7004DF2FB /* libgtest_main.a */; };
 		A36728ED2E53580A004DF2FB /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A36728BE2E530EF7004DF2FB /* libgtest.a */; };
 		A36728EE2E53580A004DF2FB /* libhighway.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A36728BD2E530EF7004DF2FB /* libhighway.a */; };
+		A1C0DE000000000000000002 /* libicudata.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A1C0DE000000000000000001 /* libicudata.a */; };
+		A1C0DE000000000000000004 /* libicui18n.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A1C0DE000000000000000003 /* libicui18n.a */; };
+		A1C0DE000000000000000006 /* libicuucx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A1C0DE000000000000000005 /* libicuucx.a */; };
 		A36728EF2E53580A004DF2FB /* libhistogram.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 33300EAB240437620019E302 /* libhistogram.a */; };
 		A36728F02E53580A004DF2FB /* libllhttp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 33300EAC240437620019E302 /* libllhttp.a */; };
 		A36728F12E53580A004DF2FB /* libnbytes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A36728C02E530EF7004DF2FB /* libnbytes.a */; };
@@ -67,6 +70,9 @@
 		A36728BB2E530EF7004DF2FB /* libcrdtp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrdtp.a; path = bin/libcrdtp.a; sourceTree = "<group>"; };
 		A36728BC2E530EF7004DF2FB /* libzstd.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libzstd.a; path = bin/libzstd.a; sourceTree = "<group>"; };
 		A36728BD2E530EF7004DF2FB /* libhighway.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libhighway.a; path = bin/libhighway.a; sourceTree = "<group>"; };
+		A1C0DE000000000000000001 /* libicudata.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libicudata.a; path = bin/libicudata.a; sourceTree = "<group>"; };
+		A1C0DE000000000000000003 /* libicui18n.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libicui18n.a; path = bin/libicui18n.a; sourceTree = "<group>"; };
+		A1C0DE000000000000000005 /* libicuucx.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libicuucx.a; path = bin/libicuucx.a; sourceTree = "<group>"; };
 		A36728BE2E530EF7004DF2FB /* libgtest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgtest.a; path = bin/libgtest.a; sourceTree = "<group>"; };
 		A36728BF2E530EF7004DF2FB /* libabseil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libabseil.a; path = bin/libabseil.a; sourceTree = "<group>"; };
 		A36728C02E530EF7004DF2FB /* libnbytes.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libnbytes.a; path = bin/libnbytes.a; sourceTree = "<group>"; };
@@ -112,6 +118,9 @@
 				A36728FD2E53580A004DF2FB /* libv8_initializers.a in Frameworks */,
 				A36729042E53580A004DF2FB /* libzstd.a in Frameworks */,
 				A36728EE2E53580A004DF2FB /* libhighway.a in Frameworks */,
+				A1C0DE000000000000000002 /* libicudata.a in Frameworks */,
+				A1C0DE000000000000000004 /* libicui18n.a in Frameworks */,
+				A1C0DE000000000000000006 /* libicuucx.a in Frameworks */,
 				A36728EF2E53580A004DF2FB /* libhistogram.a in Frameworks */,
 				A36728F62E53580A004DF2FB /* libsimdjson.a in Frameworks */,
 				A36729012E53580A004DF2FB /* libv8_zlib.a in Frameworks */,
@@ -155,6 +164,9 @@
 				A36728BE2E530EF7004DF2FB /* libgtest.a */,
 				A36728C42E530EF7004DF2FB /* libgtest_main.a */,
 				A36728BD2E530EF7004DF2FB /* libhighway.a */,
+				A1C0DE000000000000000001 /* libicudata.a */,
+				A1C0DE000000000000000003 /* libicui18n.a */,
+				A1C0DE000000000000000005 /* libicuucx.a */,
 				A36728C02E530EF7004DF2FB /* libnbytes.a */,
 				A36728C12E530EF7004DF2FB /* libncrypto.a */,
 				A36728BA2E530EF7004DF2FB /* libsimdjson.a */,
