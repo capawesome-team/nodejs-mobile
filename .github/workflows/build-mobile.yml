@@ -3,6 +3,7 @@ name: Build
 on:
   push:
     branches: [main, v24.x]
+    tags: [v*]
   pull_request:
     branches: [main, v24.x]
 
@@ -208,3 +209,35 @@ jobs:
       - uses: geekyeggo/delete-artifact@v5
         with:
           name: node-ios-*
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-24.04
+    needs: [combine-android, combine-ios]
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: nodejs-mobile-android
+          path: nodejs-mobile-android
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: nodejs-mobile-ios
+          path: nodejs-mobile-ios
+
+      - name: Zip
+        run: |
+          (cd nodejs-mobile-android && zip -qr "../nodejs-mobile-$GITHUB_REF_NAME-android.zip" .)
+          (cd nodejs-mobile-ios && zip -qr "../nodejs-mobile-$GITHUB_REF_NAME-ios.zip" .)
+          sha256sum nodejs-mobile-*.zip > SHA256SUMS.txt
+
+      - name: Create draft release
+        run: |
+          gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --draft --prerelease \
+            --title "Node.js for Mobile Apps $GITHUB_REF_NAME" \
+            --notes "Built from $GITHUB_REPOSITORY@${GITHUB_SHA::8}." \
+            nodejs-mobile-*.zip SHA256SUMS.txt
