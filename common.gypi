@@ -510,7 +510,13 @@
         'ldflags': [ '-pthread' ],
       }],
       [ 'OS in "linux freebsd openbsd solaris android aix os400 cloudabi openharmony"', {
-        'cflags': [ '-Wall', '-Wextra', '-Wno-unused-parameter', ],
+        'cflags': [
+          # nodejs-mobile: don't print 50k pointless warnings
+          '-w',
+          # '-Wall',
+          # '-Wextra',
+          '-Wno-unused-parameter',
+        ],
         'cflags_cc': [
           '-fno-rtti',
           '-fno-exceptions',
@@ -647,9 +653,11 @@
           'MACOSX_DEPLOYMENT_TARGET': '13.5',       # -mmacosx-version-min=13.5
           'USE_HEADERMAP': 'NO',
           'WARNING_CFLAGS': [
-            '-Wall',
+            # nodejs-mobile: don't print 50k pointless warnings
+          '-w',
+            # '-Wall',
+            # '-W',
             '-Wendif-labels',
-            '-W',
             '-Wno-unused-parameter',
           ],
         },
@@ -706,9 +714,11 @@
               'SDKROOT': 'macosx',
               'MACOSX_DEPLOYMENT_TARGET': '13.5',   # Use macOS deployment target for host tools
               'WARNING_CFLAGS': [
-                '-Wall',
+                # nodejs-mobile: don't print 50k pointless warnings
+                '-w',
+                # '-Wall',
+                # '-W',
                 '-Wendif-labels',
-                '-W',
                 '-Wno-unused-parameter',
               ],
             },
@@ -724,9 +734,11 @@
             'xcode_settings': {
               'IPHONEOS_DEPLOYMENT_TARGET': '14.0', # -miphoneos-version-min=14.0
               'WARNING_CFLAGS': [
-                '-Wall',
+                # nodejs-mobile: don't print 50k pointless warnings
+                '-w',
+                # '-Wall',
+                # '-W',
                 '-Wendif-labels',
-                '-W',
                 '-Wno-unused-parameter',
                 '-Wno-enum-constexpr-conversion',
               ],
