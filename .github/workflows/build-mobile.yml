@@ -148,6 +148,19 @@ jobs:
           cp -R out_android/libnode/include/* artifacts/include
           cp LICENSE artifacts/
 
+      - name: Verify 16 KB page alignment
+        run: |
+          for lib in artifacts/bin/*/libnode.so; do
+            alignments=$(readelf -lW "$lib" | awk '$1 == "LOAD" {print $NF}' | sort -u)
+            echo "$lib LOAD alignments: $alignments"
+            for alignment in $alignments; do
+              if [ $((alignment)) -lt 16384 ]; then
+                echo "ERROR: $lib has a LOAD segment with alignment $alignment (< 16384)."
+                exit 1
+              fi
+            done
+          done
+
       - uses: actions/upload-artifact@v4
         with:
           name: nodejs-mobile-android
