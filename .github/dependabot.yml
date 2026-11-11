@@ -5,7 +5,11 @@ updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: monthly
+      interval: quarterly
+    groups:
+      github-actions:
+        patterns:
+          - "*"
     commit-message:
       prefix: meta
     open-pull-requests-limit: 10

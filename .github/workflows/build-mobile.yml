@@ -29,12 +29,14 @@ jobs:
       TARGET_ARCH: ${{ matrix.config.target_arch }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
         with:
           fetch-depth: '0'
 
       - name: Run sccache-cache
-        uses: mozilla-actions/sccache-action@v0.0.6
+        uses: mozilla-actions/sccache-action@9e326ebed976843c9932b3aa0e021c6f50310eb4 # v0.0.6
+
 
       - name: Install build utils
         run: |
@@ -42,7 +44,8 @@ jobs:
           sudo apt-get install -y gcc-multilib g++-multilib
 
       - name: Setup Android NDK
-        uses: nttld/setup-ndk@v1
+        uses: nttld/setup-ndk@ed92fe6cadad69be94a966a7ee3271275e62f779 # v1.6.0
+
         id: setup-ndk
         with:
           ndk-version: ${{ env.ANDROID_NDK_VERSION }}
@@ -56,7 +59,8 @@ jobs:
           ./tools/android_build.sh $MY_ANDROID_NDK_HOME $ANDROID_TARGET_SDK_VERSION $TARGET_ARCH
           rm -rf ./out_android/libnode
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+
         with:
           name: node-android-${{ env.TARGET_ARCH }}
           path: out_android
@@ -66,9 +70,9 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - { os: macos-14, target_arch: arm64, xcode: 15.4 }
-          - { os: macos-14, target_arch: arm64-simulator, xcode: 15.4 }
-          - { os: macos-14, target_arch: x64-simulator, xcode: 15.4 }
+          - { os: macos-15, target_arch: arm64, xcode: 16.4 }
+          - { os: macos-15, target_arch: arm64-simulator, xcode: 16.4 }
+          - { os: macos-15, target_arch: x64-simulator, xcode: 16.4 }
 
     runs-on: ${{ matrix.config.os }}
     env:
@@ -85,15 +89,18 @@ jobs:
           sudo rm -rf /usr/local/share/powershell
           sudo find /Applications -type d -name "Xcode_*.app" ! -name "Xcode_$XCODE_VERSION.app" -prune -exec rm -rf "{}" \;
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
         with:
           fetch-depth: '0'
 
       - name: Run sccache-cache
-        uses: mozilla-actions/sccache-action@v0.0.6
+        uses: mozilla-actions/sccache-action@9e326ebed976843c9932b3aa0e021c6f50310eb4 # v0.0.6
+
 
       - name: Xcode Select Version
-        uses: mobiledevops/xcode-select-version-action@v1
+        uses: mobiledevops/xcode-select-version-action@7b50160de7c8bd6a8c4ee2c2e6b5ee0983886c0b # v1.1.0
+
         with:
           xcode-select-version: ${{ matrix.config.xcode }}
 
@@ -106,7 +113,8 @@ jobs:
           python3.12 -m pip install setuptools
           ./tools/ios_framework_prepare.sh $TARGET_ARCH
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+
         with:
           name: node-ios-${{ env.TARGET_ARCH }}
           path: out_ios_${{ env.TARGET_ARCH }}
@@ -120,7 +128,8 @@ jobs:
     runs-on: ${{ matrix.config.os }}
     needs: build-android
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
         with:
           fetch-depth: '0'
 
@@ -130,11 +139,13 @@ jobs:
           sudo apt-get install -y gcc-multilib g++-multilib
 
       - name: Setup Android NDK
-        uses: nttld/setup-ndk@v1
+        uses: nttld/setup-ndk@ed92fe6cadad69be94a966a7ee3271275e62f779 # v1.6.0
+
         with:
           ndk-version: ${{ env.ANDROID_NDK_VERSION }}
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+
         with:
           pattern: node-android-*
           merge-multiple: true
@@ -154,12 +165,14 @@ jobs:
           cp -R out_android/libnode/include/* artifacts/include
           cp LICENSE artifacts/
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+
         with:
           name: nodejs-mobile-android
           path: artifacts
 
-      - uses: geekyeggo/delete-artifact@v5
+      - uses: geekyeggo/delete-artifact@f275313e70c08f6120db482d7a6b98377786765b # v5.1.0
+
         with:
           name: node-android-*
 
@@ -167,20 +180,23 @@ jobs:
     strategy:
       matrix:
         config:
-          - { os: macos-14, xcode: 15.4 }
+          - { os: macos-15, xcode: 16.4 }
     runs-on: ${{ matrix.config.os }}
     needs: build-ios
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
         with:
           fetch-depth: '0'
 
       - name: Xcode Select Version
-        uses: mobiledevops/xcode-select-version-action@v1
+        uses: mobiledevops/xcode-select-version-action@7b50160de7c8bd6a8c4ee2c2e6b5ee0983886c0b # v1.1.0
+
         with:
           xcode-select-version: ${{ matrix.config.xcode }}
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+
         with:
           pattern: node-ios-*
           merge-multiple: true
@@ -207,11 +223,13 @@ jobs:
           cp -R out_ios/libnode/include/* artifacts/include
           cp LICENSE artifacts/
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+
         with:
           name: nodejs-mobile-ios
           path: artifacts
 
-      - uses: geekyeggo/delete-artifact@v5
+      - uses: geekyeggo/delete-artifact@f275313e70c08f6120db482d7a6b98377786765b # v5.1.0
+
         with:
           name: node-ios-*
